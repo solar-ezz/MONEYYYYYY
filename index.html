@@ -1713,7 +1713,9 @@ function recordGame(user,game,bet,payout,won){
   if(user.history.length>100)user.history=user.history.slice(0,100);
   _globalFeed.unshift(entry);
   if(_globalFeed.length>200)_globalFeed=_globalFeed.slice(0,200);
-  dbAddFeedEntry(entry).catch(()=>{});
+  // Write to Supabase then do a fresh fetch so all players see it
+  dbAddFeedEntry(entry).then(()=>refreshFeed()).catch(()=>{});
+  if(document.querySelector('.page.active')?.id==='page-livefeed')renderLiveFeed();
   setTimeout(checkBankruptcy,100);
 }
 
@@ -1738,7 +1740,7 @@ function navTo(page){
   if(page==='wheel')initWheelCanvas();
   if(page==='plinko')initPlinkoCanvas();
   if(page==='keno')initKeno();
-  if(page==='livefeed')renderLiveFeed();
+  if(page==='livefeed'){refreshFeed();}
   if(page==='records')renderRecords();
 }
 
@@ -2485,29 +2487,51 @@ function towerCashout(){
 
 const AVATAR_COLORS=['#f0c96e','#4a7cf7','#3dab6a','#8b5cf6','#d63f3f','#f07a50','#50d0c0'];
 function timeSince(ts){const s=Math.floor((Date.now()-ts)/1000);if(s<60)return s+'s ago';const m=Math.floor(s/60);if(m<60)return m+'m ago';return Math.floor(m/60)+'h ago';}
+function normalizeEntry(entry){
+  // Supabase rows have 'ts' (ISO string); local entries have 'time' (ms number)
+  return {
+    username: entry.username,
+    game: entry.game,
+    bet: entry.bet,
+    payout: entry.payout ?? 0,
+    won: entry.won,
+    time: entry.time || new Date(entry.ts).getTime()
+  };
+}
 function renderLiveFeed(){
-  const feed=_globalFeed.slice(0,80);const list=document.getElementById('live-feed-list');
+  const feed=_globalFeed.slice(0,80);
+  const list=document.getElementById('live-feed-list');
   document.getElementById('live-count').textContent=feed.length+' plays';
   if(feed.length===0){list.innerHTML='<div style="padding:28px;text-align:center;color:var(--muted);font-size:12px;">NO ACTIVITY YET</div>';return;}
   list.innerHTML='';
-  feed.forEach(entry=>{
-    const ts=entry.time||new Date(entry.ts).getTime();
-    const item=document.createElement('div');item.className='live-item';const colorIdx=entry.username?entry.username.charCodeAt(0)%AVATAR_COLORS.length:0;
-    const initials=entry.username?entry.username.substring(0,2).toUpperCase():'??';const net=entry.won?entry.payout-entry.bet:-entry.bet;
-    item.innerHTML=`<div class="live-av" style="background:${AVATAR_COLORS[colorIdx]}">${initials}</div><div class="live-user">${entry.username||'unknown'}</div><div class="live-game">${entry.game}</div><div class="live-bet">${fmt(entry.bet)}</div><div class="live-res ${entry.won?'win':'lose'}">${entry.won?'+':''}${fmt(net)}</div><div class="live-time">${timeSince(ts)}</div>`;
+  feed.forEach(raw=>{
+    const entry=normalizeEntry(raw);
+    const item=document.createElement('div');item.className='live-item';
+    const colorIdx=entry.username?entry.username.charCodeAt(0)%AVATAR_COLORS.length:0;
+    const initials=entry.username?entry.username.substring(0,2).toUpperCase():'??';
+    const net=entry.won?entry.payout-entry.bet:-entry.bet;
+    item.innerHTML=`<div class="live-av" style="background:${AVATAR_COLORS[colorIdx]}">${initials}</div><div class="live-user">${entry.username||'unknown'}</div><div class="live-game">${entry.game}</div><div class="live-bet">${fmt(entry.bet)}</div><div class="live-res ${entry.won?'win':'lose'}">${entry.won?'+':''}${fmt(net)}</div><div class="live-time">${timeSince(entry.time)}</div>`;
     list.appendChild(item);
   });
+}
+async function refreshFeed(){
+  try{
+    const rows=await dbGetFeed();
+    _globalFeed=rows;
+    if(document.querySelector('.page.active')?.id==='page-livefeed')renderLiveFeed();
+  }catch(e){}
 }
 let liveFeedInterval=null;
 function startLiveFeedPoll(){
   if(liveFeedInterval)clearInterval(liveFeedInterval);
+  // Fetch feed every 3s — always update _globalFeed, render if on that page
   liveFeedInterval=setInterval(async()=>{
-    try{const rows=await dbGetFeed();_globalFeed=rows;}catch(e){}
+    await refreshFeed();
     try{_allUsers=await dbGetAllUsers();}catch(e){}
-    if(document.querySelector('.page.active')?.id==='page-livefeed')renderLiveFeed();
-    if(document.querySelector('.page.active')?.id==='page-leaderboard')renderLeaderboard();
-    if(document.querySelector('.page.active')?.id==='page-records')renderRecords();
-  },8000);
+    const activePage=document.querySelector('.page.active')?.id;
+    if(activePage==='page-leaderboard')renderLeaderboard();
+    if(activePage==='page-records')renderRecords();
+  },3000);
 }
 function renderRecords(){
   const users=_allUsers;
