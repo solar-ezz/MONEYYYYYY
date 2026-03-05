@@ -2781,10 +2781,11 @@ function renderTowerDisplay(){
       const cell=document.createElement('div');cell.className='tower-cell';
       const state=towerGrid[r]?towerGrid[r][c]:null;
       if(!towerInGame||r>towerCurrentRow){cell.classList.add('tower-locked');}
-      else if(state==='safe'){cell.classList.add('tower-safe');cell.innerHTML='\u2705';}
-      else if(state==='mine'){cell.classList.add('tower-mine');cell.innerHTML='';}
-      else if(r===towerCurrentRow&&towerInGame){cell.classList.add('tower-active');cell.onclick=()=>towerReveal(r,c);}
-      else{cell.classList.add('tower-empty');}
+else if(state==='safe'){cell.classList.add('tower-safe');cell.innerHTML='✅';}
+else if(state==='mine-revealed'){cell.classList.add('tower-mine');cell.innerHTML='💣';}
+else if(state==='mine'){cell.classList.add('tower-empty');}
+else if(r===towerCurrentRow&&towerInGame){cell.classList.add('tower-active');cell.onclick=()=>towerReveal(r,c);}
+else{cell.classList.add('tower-empty');}
       row.appendChild(cell);
     }
     wrap.appendChild(label);wrap.appendChild(row);wrap.appendChild(mult);display.appendChild(wrap);
@@ -2806,8 +2807,8 @@ function startTower(){
 function towerReveal(row,col){
   if(!towerInGame||row!==towerCurrentRow)return;
   const cell=towerGrid[row][col];
-  if(cell==='mine'){
-    towerInGame=false;renderTowerDisplay();
+if(cell==='mine'){
+    towerGrid[row][col]='mine-revealed';towerInGame=false;renderTowerDisplay();
     document.getElementById('tower-cashout').classList.add('hidden');document.getElementById('tower-bet-area').classList.remove('hidden');
     const user=getCurrentUser();user.balance-=towerBet;recordGame(user,'Tower',towerBet,0,false);saveCurrentUser(user);updateUI();
     const resultEl=document.getElementById('tower-result');resultEl.className='game-result lose';
