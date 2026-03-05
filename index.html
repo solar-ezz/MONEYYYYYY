@@ -2253,7 +2253,7 @@ function endMines(won){
 }
 
 let crashInGame=false,crashMult=1,crashInterval=null,crashBet=0,crashTarget=0,crashPoints=[];
-function generateCrashPoint(){const r=Math.random();if(r<.01)return 1.0;return Math.max(1,.99/(1-r));}
+function generateCrashPoint(){const r=Math.random();if(r<.07)return 1.0;if(r<.15)return 1.0+Math.random()*.3;return Math.max(1,.94/(1-r));}
 function startCrash(){
   const bet=getBet('crash-bet');if(bet===null)return;
   crashBet=bet;crashInGame=true;crashMult=1;crashTarget=generateCrashPoint();crashPoints=[{x:0,y:0}];
