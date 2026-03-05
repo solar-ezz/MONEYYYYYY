@@ -1826,7 +1826,7 @@ async function doLogin(){
   try{
     let user=await dbGetUser(username);
     if(!user||user.password!==hashish(password)){err.textContent='INVALID CREDENTIALS';setAuthLoading(false);return;}
-    user=ensureUUID(user);
+    if(!user.uuid){user.uuid=generateUUID();await dbUpsertUser(user);}
     err.textContent='';_currentUser=user;setSession(username);await enterApp();
   }catch(e){err.textContent='CONNECTION ERROR — TRY AGAIN';setAuthLoading(false);}
 }
@@ -3368,8 +3368,10 @@ function ownerRemoveUUID(uuid){
   if(session){
     try{
       let user=await dbGetUser(session);
-      if(user){user=ensureUUID(user);_currentUser=user;await enterApp();}
-      else{clearSession();}
+      if(user){
+        if(!user.uuid){user.uuid=generateUUID();await dbUpsertUser(user);}
+        _currentUser=user;await enterApp();
+      }else{clearSession();}
     }catch(e){clearSession();}
   }
   checkForUpdate();
