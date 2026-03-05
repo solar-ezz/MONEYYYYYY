@@ -2782,7 +2782,7 @@ function renderTowerDisplay(){
       const state=towerGrid[r]?towerGrid[r][c]:null;
       if(!towerInGame||r>towerCurrentRow){cell.classList.add('tower-locked');}
       else if(state==='safe'){cell.classList.add('tower-safe');cell.innerHTML='\u2705';}
-      else if(state==='mine'){cell.classList.add('tower-mine');cell.innerHTML='\uD83D\uDCA3';}
+      else if(state==='mine'){cell.classList.add('tower-mine');cell.innerHTML='';}
       else if(r===towerCurrentRow&&towerInGame){cell.classList.add('tower-active');cell.onclick=()=>towerReveal(r,c);}
       else{cell.classList.add('tower-empty');}
       row.appendChild(cell);
