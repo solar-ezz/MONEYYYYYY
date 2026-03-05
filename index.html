@@ -1205,18 +1205,63 @@ textarea.inline-input{min-height:100px;resize:vertical;}
 <div class="toast-container" id="toast-container"></div>
 
 <script>
-const DB_KEY='luckvault_db';
 const SESSION_KEY='luckvault_session';
 const EXPORT_MAGIC='LV1';
 const EXPORT_SALT='luckvault_secure_2024';
+const SB_URL='https://cmrzprvoitoilylxutjr.supabase.co';
+const SB_KEY='sb_publishable_TLUvFsfgdgKvxWVBS_251A_ihHOwHmO';
 
-function getDB(){try{return JSON.parse(localStorage.getItem(DB_KEY))||{users:{}};}catch(e){return{users:{}};}}
-function saveDB(db){localStorage.setItem(DB_KEY,JSON.stringify(db));}
+let _currentUser=null;
+let _globalFeed=[];
+let _allUsers=[];
+let _saveTimeout=null;
+
+async function sbFetch(path,method='GET',body=null){
+  const opts={method,headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation'}};
+  if(body)opts.body=JSON.stringify(body);
+  const res=await fetch(SB_URL+path,opts);
+  if(!res.ok){const t=await res.text();throw new Error(t);}
+  const text=await res.text();
+  return text?JSON.parse(text):null;
+}
+
+async function dbGetUser(username){
+  const rows=await sbFetch('/rest/v1/users?username=eq.'+encodeURIComponent(username)+'&select=*');
+  return rows&&rows.length>0?rows[0].data:null;
+}
+
+async function dbSaveUser(data){
+  await sbFetch('/rest/v1/users','POST',{username:data.username,data:data,updated_at:new Date().toISOString()});
+}
+
+async function dbUpsertUser(data){
+  await sbFetch('/rest/v1/users?on_conflict=username','POST',{username:data.username,data:data,updated_at:new Date().toISOString()});
+}
+
+async function dbGetAllUsers(){
+  const rows=await sbFetch('/rest/v1/users?select=username,data&order=updated_at.desc');
+  return rows?rows.map(r=>r.data):[];
+}
+
+async function dbGetFeed(){
+  const rows=await sbFetch('/rest/v1/feed?select=*&order=ts.desc&limit=100');
+  return rows||[];
+}
+
+async function dbAddFeedEntry(entry){
+  await sbFetch('/rest/v1/feed','POST',{username:entry.username,game:entry.game,bet:entry.bet,payout:entry.payout,won:entry.won,ts:new Date(entry.time).toISOString()});
+}
+
 function getSession(){return localStorage.getItem(SESSION_KEY);}
 function setSession(u){localStorage.setItem(SESSION_KEY,u);}
 function clearSession(){localStorage.removeItem(SESSION_KEY);}
-function getCurrentUser(){const u=getSession();if(!u)return null;return getDB().users[u]||null;}
-function saveCurrentUser(d){const db=getDB();db.users[d.username]=d;saveDB(db);}
+function getCurrentUser(){return _currentUser;}
+
+function saveCurrentUser(data){
+  _currentUser=data;
+  if(_saveTimeout)clearTimeout(_saveTimeout);
+  _saveTimeout=setTimeout(()=>{dbUpsertUser(data).catch(()=>{});},600);
+}
 
 function createUser(username,password){
   return{username,password,balance:5000,startingBalance:5000,totalWagered:0,totalWon:0,gamesPlayed:0,gamesWon:0,history:[],level:1,xp:0,dayStreak:0,lastLogin:null,lastStreak:null,lastJackpot:null,lastFreeSpin:null,createdAt:Date.now()};
@@ -1294,20 +1339,28 @@ document.querySelectorAll('.auth-tab').forEach(tab=>{
 document.getElementById('login-username').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 document.getElementById('login-password').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 
-function doLogin(){
+function setAuthLoading(loading){
+  document.querySelectorAll('#login-form .btn-gold,#register-form .btn-gold').forEach(b=>{
+    b.disabled=loading;
+    if(!loading)b.textContent=b.closest('#login-form')?'ENTER VAULT':'CREATE ACCOUNT';
+    else b.textContent='LOADING...';
+  });
+}
+
+async function doLogin(){
   const username=document.getElementById('login-username').value.trim().toLowerCase();
   const password=document.getElementById('login-password').value;
   const err=document.getElementById('login-error');
   if(!username||!password){err.textContent='ENTER USERNAME AND PASSWORD';return;}
-  const db=getDB();
-  const user=db.users[username];
-  if(!user||user.password!==hashish(password)){err.textContent='INVALID CREDENTIALS';return;}
-  err.textContent='';
-  setSession(username);
-  enterApp();
+  setAuthLoading(true);
+  try{
+    const user=await dbGetUser(username);
+    if(!user||user.password!==hashish(password)){err.textContent='INVALID CREDENTIALS';setAuthLoading(false);return;}
+    err.textContent='';_currentUser=user;setSession(username);await enterApp();
+  }catch(e){err.textContent='CONNECTION ERROR — TRY AGAIN';setAuthLoading(false);}
 }
 
-function doRegister(){
+async function doRegister(){
   const username=document.getElementById('reg-username').value.trim().toLowerCase();
   const password=document.getElementById('reg-password').value;
   const confirm=document.getElementById('reg-confirm').value;
@@ -1316,17 +1369,19 @@ function doRegister(){
   if(username.length<3){err.textContent='USERNAME MUST BE 3+ CHARS';return;}
   if(password.length<4){err.textContent='PASSWORD MUST BE 4+ CHARS';return;}
   if(password!==confirm){err.textContent='PASSWORDS DO NOT MATCH';return;}
-  const db=getDB();
-  if(db.users[username]){err.textContent='USERNAME TAKEN';return;}
-  const user=createUser(username,hashish(password));
-  db.users[username]=user;
-  saveDB(db);
-  setSession(username);
-  err.textContent='';
-  enterApp();
+  setAuthLoading(true);
+  try{
+    const existing=await dbGetUser(username);
+    if(existing){err.textContent='USERNAME TAKEN';setAuthLoading(false);return;}
+    const user=createUser(username,hashish(password));
+    await dbSaveUser(user);
+    err.textContent='';_currentUser=user;setSession(username);await enterApp();
+  }catch(e){err.textContent='CONNECTION ERROR — TRY AGAIN';setAuthLoading(false);}
 }
 
 function doLogout(){
+  if(_saveTimeout){clearTimeout(_saveTimeout);if(_currentUser)dbUpsertUser(_currentUser).catch(()=>{});}
+  _currentUser=null;_allUsers=[];_globalFeed=[];
   clearSession();
   document.getElementById('app-screen').classList.remove('active');
   document.getElementById('auth-screen').classList.add('active');
@@ -1334,18 +1389,15 @@ function doLogout(){
   document.getElementById('login-password').value='';
 }
 
-function enterApp(){
+async function enterApp(){
   document.getElementById('auth-screen').classList.remove('active');
   document.getElementById('app-screen').classList.add('active');
-  updateUI();
-  navTo('dashboard');
-  initWheelCanvas();
-  initPlinkoCanvas();
-  initDiceDisplay(1,1);
-  buildHorseSelection();
-  buildRaceTrack();
-  startLiveFeedPoll();
-  checkBankruptcy();
+  try{_allUsers=await dbGetAllUsers();}catch(e){_allUsers=_currentUser?[_currentUser]:[];}
+  try{const rows=await dbGetFeed();_globalFeed=rows;}catch(e){_globalFeed=[];}
+  updateUI();navTo('dashboard');
+  initWheelCanvas();initPlinkoCanvas();initDiceDisplay(1,1);
+  buildHorseSelection();buildRaceTrack();
+  startLiveFeedPoll();checkBankruptcy();setAuthLoading(false);
 }
 
 function updateUI(){
@@ -1406,12 +1458,9 @@ function recordGame(user,game,bet,payout,won){
   const entry={game,bet,payout:won?payout:0,won,time:Date.now(),username:user.username};
   user.history.unshift(entry);
   if(user.history.length>100)user.history=user.history.slice(0,100);
-  const db=getDB();
-  if(!db.feed)db.feed=[];
-  db.feed.unshift(entry);
-  if(db.feed.length>200)db.feed=db.feed.slice(0,200);
-  db.users[user.username]=user;
-  saveDB(db);
+  _globalFeed.unshift(entry);
+  if(_globalFeed.length>200)_globalFeed=_globalFeed.slice(0,200);
+  dbAddFeedEntry(entry).catch(()=>{});
   setTimeout(checkBankruptcy,100);
 }
 
@@ -1951,7 +2000,7 @@ function renderHistory(){
   });
 }
 function renderLeaderboard(){
-  const db=getDB();const users=Object.values(db.users);users.sort((a,b)=>b.balance-a.balance);
+  const users=[..._allUsers].sort((a,b)=>b.balance-a.balance);
   const list=document.getElementById('leaderboard-list');list.innerHTML='';
   if(users.length===0){list.innerHTML='<div style="color:var(--muted);text-align:center;padding:28px;">NO PLAYERS YET</div>';return;}
   const colors=['#f0c96e','#aaaaaa','#cd7f32','#4a7cf7','#3dab6a','#8b5cf6','#d63f3f'];
@@ -1982,7 +2031,8 @@ function doImport(){
   }catch(e){showToast('INVALID IMPORT DATA','lose');}
 }
 function applyImport(data){
-  const db=getDB();const current=getSession();db.users[current]={...data,username:current};saveDB(db);updateUI();hideImport();showToast('ACCOUNT IMPORTED SUCCESSFULLY','gold');
+  const current=getSession();const merged={...data,username:current};
+  _currentUser=merged;dbUpsertUser(merged).catch(()=>{});updateUI();hideImport();showToast('ACCOUNT IMPORTED SUCCESSFULLY','gold');
 }
 function changePassword(){
   const pw=document.getElementById('new-pw').value;const conf=document.getElementById('new-pw-confirm').value;const msg=document.getElementById('pw-change-msg');
@@ -1991,7 +2041,7 @@ function changePassword(){
   document.getElementById('new-pw').value='';document.getElementById('new-pw-confirm').value='';setTimeout(()=>{msg.textContent='';msg.style.color='';},3000);
 }
 function confirmReset(){showModal('RESET BALANCE','This will reset your balance to $5,000. Cannot be undone.',()=>{const user=getCurrentUser();user.balance=5000;user.startingBalance=5000;saveCurrentUser(user);updateUI();showToast('BALANCE RESET TO $5,000','gold');});}
-function confirmDeleteAccount(){showModal('DELETE ACCOUNT','This will permanently delete your account. Cannot be undone.',()=>{const db=getDB();const username=getSession();delete db.users[username];saveDB(db);clearSession();doLogout();showToast('ACCOUNT DELETED','info');});}
+function confirmDeleteAccount(){showModal('DELETE ACCOUNT','This will permanently delete your account. Cannot be undone.',async()=>{try{await sbFetch('/rest/v1/users?username=eq.'+encodeURIComponent(getSession()),'DELETE');}catch(e){}doLogout();showToast('ACCOUNT DELETED','info');});}
 
 function checkBankruptcy(){
   const user=getCurrentUser();if(!user)return;
@@ -2183,24 +2233,31 @@ function towerCashout(){
 const AVATAR_COLORS=['#f0c96e','#4a7cf7','#3dab6a','#8b5cf6','#d63f3f','#f07a50','#50d0c0'];
 function timeSince(ts){const s=Math.floor((Date.now()-ts)/1000);if(s<60)return s+'s ago';const m=Math.floor(s/60);if(m<60)return m+'m ago';return Math.floor(m/60)+'h ago';}
 function renderLiveFeed(){
-  const db=getDB();const feed=(db.feed||[]).slice(0,80);const list=document.getElementById('live-feed-list');
+  const feed=_globalFeed.slice(0,80);const list=document.getElementById('live-feed-list');
   document.getElementById('live-count').textContent=feed.length+' plays';
   if(feed.length===0){list.innerHTML='<div style="padding:28px;text-align:center;color:var(--muted);font-size:12px;">NO ACTIVITY YET</div>';return;}
   list.innerHTML='';
   feed.forEach(entry=>{
+    const ts=entry.time||new Date(entry.ts).getTime();
     const item=document.createElement('div');item.className='live-item';const colorIdx=entry.username?entry.username.charCodeAt(0)%AVATAR_COLORS.length:0;
     const initials=entry.username?entry.username.substring(0,2).toUpperCase():'??';const net=entry.won?entry.payout-entry.bet:-entry.bet;
-    item.innerHTML=`<div class="live-av" style="background:${AVATAR_COLORS[colorIdx]}">${initials}</div><div class="live-user">${entry.username||'unknown'}</div><div class="live-game">${entry.game}</div><div class="live-bet">${fmt(entry.bet)}</div><div class="live-res ${entry.won?'win':'lose'}">${entry.won?'+':''}${fmt(net)}</div><div class="live-time">${timeSince(entry.time)}</div>`;
+    item.innerHTML=`<div class="live-av" style="background:${AVATAR_COLORS[colorIdx]}">${initials}</div><div class="live-user">${entry.username||'unknown'}</div><div class="live-game">${entry.game}</div><div class="live-bet">${fmt(entry.bet)}</div><div class="live-res ${entry.won?'win':'lose'}">${entry.won?'+':''}${fmt(net)}</div><div class="live-time">${timeSince(ts)}</div>`;
     list.appendChild(item);
   });
 }
 let liveFeedInterval=null;
 function startLiveFeedPoll(){
   if(liveFeedInterval)clearInterval(liveFeedInterval);
-  liveFeedInterval=setInterval(()=>{if(document.querySelector('.page.active')?.id==='page-livefeed')renderLiveFeed();},1500);
+  liveFeedInterval=setInterval(async()=>{
+    try{const rows=await dbGetFeed();_globalFeed=rows;}catch(e){}
+    try{_allUsers=await dbGetAllUsers();}catch(e){}
+    if(document.querySelector('.page.active')?.id==='page-livefeed')renderLiveFeed();
+    if(document.querySelector('.page.active')?.id==='page-leaderboard')renderLeaderboard();
+    if(document.querySelector('.page.active')?.id==='page-records')renderRecords();
+  },8000);
 }
 function renderRecords(){
-  const db=getDB();const users=Object.values(db.users);
+  const users=_allUsers;
   if(users.length===0){document.getElementById('records-grid').innerHTML='<div style="color:var(--muted);padding:24px;">NO PLAYERS YET</div>';return;}
   const metrics=[{key:'level',label:'LEVEL',fmt:v=>'LVL '+v},{key:'balance',label:'BALANCE',fmt:v=>fmt(v)},{key:'gamesPlayed',label:'GAMES PLAYED',fmt:v=>v.toLocaleString()},{key:'gamesLost',label:'LOSSES',fmt:v=>v.toLocaleString(),derive:u=>u.gamesPlayed-u.gamesWon},{key:'gamesWon',label:'WINS',fmt:v=>v.toLocaleString()},{key:'totalWon',label:'MOST EARNED',fmt:v=>fmt(v)}];
   const grid=document.getElementById('records-grid');grid.innerHTML='';
@@ -2212,7 +2269,16 @@ function renderRecords(){
   });
 }
 
-window.addEventListener('load',()=>{const session=getSession();if(session){const db=getDB();if(db.users[session])enterApp();else clearSession();}});
+window.addEventListener('load',async()=>{
+  const session=getSession();
+  if(session){
+    try{
+      const user=await dbGetUser(session);
+      if(user){_currentUser=user;await enterApp();}
+      else clearSession();
+    }catch(e){clearSession();}
+  }
+});
 </script>
 </body>
 </html>
