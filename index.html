@@ -405,6 +405,44 @@ textarea.inline-input{min-height:100px;resize:vertical;}
   .slot-reel{width:62px;height:62px;font-size:32px;}
   .keno-grid{grid-template-columns:repeat(8,1fr);}
 }
+
+.poker-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.poker-tab{flex:1;padding:10px;border:1px solid var(--border);background:var(--deep);color:var(--muted);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .2s;}
+.poker-tab.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.08);}
+.poker-hand{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;justify-content:center;}
+.bj-card{background:#fff;border-radius:4px;padding:6px 10px;min-width:44px;text-align:center;position:relative;box-shadow:0 2px 8px rgba(0,0,0,.4);}
+.bj-card .card-val{font-size:18px;font-weight:700;line-height:1;}
+.bj-card .card-suit{font-size:14px;}
+.bj-card .red{color:#c0392b;}
+.vp-hold-row{display:flex;gap:8px;justify-content:center;margin-bottom:10px;}
+.vp-hold-btn{padding:6px 16px;border:1px solid var(--border);background:var(--deep);color:var(--muted);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .2s;}
+.vp-hold-btn.held{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.15);}
+.vp-paytable{display:flex;flex-direction:column;gap:4px;margin-bottom:14px;background:var(--deep);padding:10px;border-radius:4px;}
+.vpt-row{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);letter-spacing:1px;}
+.war-card{width:80px;height:110px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.5);margin:0 auto;}
+.scratch-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.scratch-cell{aspect-ratio:1;background:var(--surface);border:2px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:32px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.scratch-cell.scratched{background:var(--deep);}
+.scratch-cell::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#888,#aaa);border-radius:2px;transition:opacity .3s;}
+.scratch-cell.scratched::before{opacity:0;}
+.memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;}
+.mem-card{aspect-ratio:1;background:var(--surface);border:2px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:28px;cursor:pointer;transition:transform .2s,background .2s;user-select:none;}
+.mem-card.flipped{background:var(--deep);border-color:var(--gold);}
+.mem-card.matched{background:rgba(61,171,106,.15);border-color:var(--green);}
+.mem-card.hidden-face{font-size:0;}
+.stock-dir-row{display:flex;gap:12px;margin-bottom:12px;}
+.stock-dir-btn{flex:1;padding:16px;border:none;border-radius:4px;font-family:'DM Mono',monospace;font-size:14px;letter-spacing:2px;cursor:pointer;font-weight:700;transition:all .2s;}
+.stock-dir-btn.up{background:linear-gradient(135deg,var(--green),#2a8a4a);color:#fff;}
+.stock-dir-btn.down{background:linear-gradient(135deg,var(--red),#a02020);color:#fff;}
+.stock-dir-btn:hover{filter:brightness(1.15);}
+.sixdice-picks{display:flex;gap:10px;justify-content:center;margin-bottom:16px;flex-wrap:wrap;}
+.sixdice-num{width:52px;height:52px;border:2px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:28px;cursor:pointer;transition:all .2s;color:var(--muted);}
+.sixdice-num.selected{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.1);}
+.sixdice-grid{display:flex;gap:10px;justify-content:center;margin-bottom:16px;flex-wrap:wrap;}
+.sd-die{width:52px;height:52px;background:var(--deep);border:2px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:26px;transition:all .3s;}
+.sd-die.match{border-color:var(--gold);background:rgba(201,168,76,.15);color:var(--gold);}
+.sd-die.rolling{animation:diceroll .6s ease;}
+@keyframes diceroll{0%{transform:rotate(0);}25%{transform:rotate(90deg);}50%{transform:rotate(180deg);}75%{transform:rotate(270deg);}100%{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
@@ -517,6 +555,11 @@ textarea.inline-input{min-height:100px;resize:vertical;}
       <div class="nav-item" onclick="navTo('hilo');closeDrawer()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>HI-LO</div>
       <div class="nav-item" onclick="navTo('baccarat');closeDrawer()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="2" width="18" height="20" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="18" x2="12" y2="18"/></svg>BACCARAT</div>
       <div class="nav-item" onclick="navTo('tower');closeDrawer()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="18" width="16" height="3" rx="1"/><rect x="6" y="13" width="12" height="3" rx="1"/><rect x="8" y="8" width="8" height="3" rx="1"/><rect x="10" y="3" width="4" height="3" rx="1"/></svg>TOWER</div>
+      <div class="nav-item" onclick="navTo('poker');closeDrawer()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="2" width="18" height="20" rx="2"/><path d="M7 8h10M7 12h7"/></svg>POKER</div>
+      <div class="nav-item" onclick="navTo('scratch');closeDrawer()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 9l3 3-3 3M13 15h4"/></svg>SCRATCH CARD</div>
+      <div class="nav-item" onclick="navTo('memory');closeDrawer()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="9" height="9" rx="1"/><rect x="13" y="2" width="9" height="9" rx="1"/><rect x="2" y="13" width="9" height="9" rx="1"/><rect x="13" y="13" width="9" height="9" rx="1"/></svg>MEMORY MATCH</div>
+      <div class="nav-item" onclick="navTo('stockmarket');closeDrawer()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>STOCK MARKET</div>
+      <div class="nav-item" onclick="navTo('sixdice');closeDrawer()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="1" width="10" height="10" rx="2"/><rect x="13" y="1" width="10" height="10" rx="2"/><rect x="1" y="13" width="10" height="10" rx="2"/><rect x="13" y="13" width="10" height="10" rx="2"/></svg>SIX DICE</div>
     </div>
     <div class="nav-section">
       <div class="nav-label">SOCIAL</div>
@@ -568,6 +611,11 @@ textarea.inline-input{min-height:100px;resize:vertical;}
         <div class="nav-item" onclick="navTo('hilo')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>HI-LO</div>
         <div class="nav-item" onclick="navTo('baccarat')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="2" width="18" height="20" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="18" x2="12" y2="18"/></svg>BACCARAT</div>
         <div class="nav-item" onclick="navTo('tower')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="18" width="16" height="3" rx="1"/><rect x="6" y="13" width="12" height="3" rx="1"/><rect x="8" y="8" width="8" height="3" rx="1"/><rect x="10" y="3" width="4" height="3" rx="1"/></svg>TOWER</div>
+        <div class="nav-item" onclick="navTo('poker')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="2" width="18" height="20" rx="2"/><path d="M7 8h10M7 12h7"/></svg>POKER</div>
+        <div class="nav-item" onclick="navTo('scratch')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 9l3 3-3 3M13 15h4"/></svg>SCRATCH CARD</div>
+        <div class="nav-item" onclick="navTo('memory')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="9" height="9" rx="1"/><rect x="13" y="2" width="9" height="9" rx="1"/><rect x="2" y="13" width="9" height="9" rx="1"/><rect x="13" y="13" width="9" height="9" rx="1"/></svg>MEMORY MATCH</div>
+        <div class="nav-item" onclick="navTo('stockmarket')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>STOCK MARKET</div>
+        <div class="nav-item" onclick="navTo('sixdice')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="1" width="10" height="10" rx="2"/><rect x="13" y="1" width="10" height="10" rx="2"/><rect x="1" y="13" width="10" height="10" rx="2"/><rect x="13" y="13" width="10" height="10" rx="2"/></svg>SIX DICE</div>
       </div>
       <div class="nav-section">
         <div class="nav-label">SOCIAL</div>
@@ -618,6 +666,11 @@ textarea.inline-input{min-height:100px;resize:vertical;}
           <div class="game-card" onclick="navTo('hilo')"><div class="game-icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><polyline points="8 30 24 14 40 30"/><line x1="24" y1="14" x2="24" y2="44"/></svg></div><div class="game-name">HI-LO</div><div class="game-desc">Higher or lower card guessing.</div><span class="game-rtp">UP TO 60x</span></div>
           <div class="game-card" onclick="navTo('baccarat')"><div class="game-icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="36" height="40" rx="4"/><line x1="12" y1="14" x2="36" y2="14"/><line x1="12" y1="24" x2="36" y2="24"/><line x1="12" y1="34" x2="28" y2="34"/></svg></div><div class="game-name">BACCARAT</div><div class="game-desc">Player vs Banker. Closest to 9.</div><span class="game-rtp">RTP 98.9%</span></div>
           <div class="game-card" onclick="navTo('tower')"><div class="game-icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="38" width="36" height="6" rx="2"/><rect x="10" y="28" width="28" height="6" rx="2"/><rect x="14" y="18" width="20" height="6" rx="2"/><rect x="18" y="8" width="12" height="6" rx="2"/></svg></div><div class="game-name">TOWER</div><div class="game-desc">Climb the tower row by row.</div><span class="game-rtp">UP TO 100x</span></div>
+          <div class="game-card" onclick="navTo('poker')"><div class="game-icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="36" height="40" rx="4"/><line x1="14" y1="16" x2="34" y2="16"/><line x1="14" y1="24" x2="28" y2="24"/></svg></div><div class="game-name">POKER</div><div class="game-desc">Video, War & 3-Card Poker.</div><span class="game-rtp">UP TO 800x</span></div>
+          <div class="game-card" onclick="navTo('scratch')"><div class="game-icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="8" width="40" height="32" rx="4"/><path d="M12 18l6 6-6 6M26 30h10"/></svg></div><div class="game-name">SCRATCH CARD</div><div class="game-desc">Scratch to reveal. Match 3.</div><span class="game-rtp">UP TO 50x</span></div>
+          <div class="game-card" onclick="navTo('memory')"><div class="game-icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="18" height="18" rx="2"/><rect x="26" y="4" width="18" height="18" rx="2"/><rect x="4" y="26" width="18" height="18" rx="2"/><rect x="26" y="26" width="18" height="18" rx="2"/></svg></div><div class="game-name">MEMORY MATCH</div><div class="game-desc">Match pairs. Speed = reward.</div><span class="game-rtp">UP TO 5x</span></div>
+          <div class="game-card" onclick="navTo('stockmarket')"><div class="game-icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 36 16 20 24 28 34 10 42 18"/><line x1="6" y1="42" x2="42" y2="42"/></svg></div><div class="game-name">STOCK MARKET</div><div class="game-desc">Predict up or down. 5 rounds.</div><span class="game-rtp">UP TO 17x</span></div>
+          <div class="game-card" onclick="navTo('sixdice')"><div class="game-icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="4"/><rect x="26" y="2" width="20" height="20" rx="4"/><rect x="2" y="26" width="20" height="20" rx="4"/><rect x="26" y="26" width="20" height="20" rx="4"/></svg></div><div class="game-name">SIX DICE</div><div class="game-desc">Guess a number, roll 6 dice.</div><span class="game-rtp">UP TO 100x</span></div>
         </div>
       </div>
 
@@ -1102,6 +1155,206 @@ textarea.inline-input{min-height:100px;resize:vertical;}
         </div>
       </div>
 
+
+      <!-- POKER -->
+      <div id="page-poker" class="page">
+        <div class="page-header"><div class="page-title">POKER</div><div class="page-subtitle">CHOOSE YOUR VARIANT</div></div>
+        <div class="game-panel">
+          <div class="poker-tabs">
+            <button class="poker-tab active" onclick="selectPokerMode('videopoker')">VIDEO POKER</button>
+            <button class="poker-tab" onclick="selectPokerMode('war')">WAR</button>
+            <button class="poker-tab" onclick="selectPokerMode('threecard')">3-CARD</button>
+          </div>
+          <!-- Video Poker -->
+          <div id="poker-videopoker" class="poker-mode">
+            <div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:12px;">HOLD THE CARDS YOU WANT TO KEEP — THEN DRAW</div>
+            <div class="poker-hand" id="vp-hand"></div>
+            <div id="vp-hold-row" class="vp-hold-row" style="display:none"></div>
+            <div class="vp-paytable">
+              <div class="vpt-row"><span>ROYAL FLUSH</span><span>800x</span></div>
+              <div class="vpt-row"><span>STRAIGHT FLUSH</span><span>50x</span></div>
+              <div class="vpt-row"><span>FOUR OF A KIND</span><span>25x</span></div>
+              <div class="vpt-row"><span>FULL HOUSE</span><span>9x</span></div>
+              <div class="vpt-row"><span>FLUSH</span><span>6x</span></div>
+              <div class="vpt-row"><span>STRAIGHT</span><span>4x</span></div>
+              <div class="vpt-row"><span>THREE OF A KIND</span><span>3x</span></div>
+              <div class="vpt-row"><span>TWO PAIR</span><span>2x</span></div>
+              <div class="vpt-row"><span>JACKS OR BETTER</span><span>1x</span></div>
+            </div>
+            <div class="bet-controls">
+              <input type="number" class="bet-input" id="vp-bet" value="100" min="1">
+              <div class="bet-quick">
+                <button class="bet-q-btn" onclick="setBet('vp-bet',.5)">1/2</button>
+                <button class="bet-q-btn" onclick="setBet('vp-bet',2)">2x</button>
+                <button class="bet-q-btn" onclick="setMaxBet('vp-bet')">MAX</button>
+              </div>
+              <button class="play-btn" id="vp-deal-btn" onclick="vpDeal()">DEAL</button>
+              <button class="play-btn" id="vp-draw-btn" onclick="vpDraw()" style="display:none;background:linear-gradient(135deg,var(--blue),#2a5cd4)">DRAW</button>
+            </div>
+            <div class="game-result" id="vp-result"></div>
+          </div>
+          <!-- War -->
+          <div id="poker-war" class="poker-mode" style="display:none">
+            <div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:16px;">YOUR CARD VS DEALER — HIGHEST CARD WINS — TIE = WAR</div>
+            <div style="display:flex;justify-content:center;gap:40px;margin-bottom:16px;">
+              <div style="text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:8px;">YOU</div><div class="war-card" id="war-player-card">?</div></div>
+              <div style="text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:8px;">DEALER</div><div class="war-card" id="war-dealer-card">?</div></div>
+            </div>
+            <div id="war-state" style="text-align:center;font-size:11px;color:var(--muted);margin-bottom:12px;min-height:18px;"></div>
+            <div class="bet-controls">
+              <input type="number" class="bet-input" id="war-bet" value="100" min="1">
+              <div class="bet-quick">
+                <button class="bet-q-btn" onclick="setBet('war-bet',.5)">1/2</button>
+                <button class="bet-q-btn" onclick="setBet('war-bet',2)">2x</button>
+                <button class="bet-q-btn" onclick="setMaxBet('war-bet')">MAX</button>
+              </div>
+              <button class="play-btn" id="war-play-btn" onclick="playWar()">PLAY</button>
+              <button class="play-btn" id="war-btn" onclick="goToWar()" style="display:none;background:linear-gradient(135deg,var(--red),#a02020)">GO TO WAR!</button>
+              <button class="play-btn" id="war-fold-btn" onclick="warFold()" style="display:none;background:var(--surface);color:var(--muted);border:1px solid var(--border)">SURRENDER (LOSE HALF)</button>
+            </div>
+            <div class="game-result" id="war-result"></div>
+          </div>
+          <!-- Three Card Poker -->
+          <div id="poker-threecard" class="poker-mode" style="display:none">
+            <div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:12px;">ANTE — SEE YOUR CARDS — PLAY OR FOLD</div>
+            <div style="display:flex;justify-content:center;gap:40px;margin-bottom:8px;">
+              <div style="text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:8px;">YOUR HAND</div><div class="poker-hand" id="tcp-player-hand" style="justify-content:center"></div></div>
+              <div style="text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:8px;">DEALER HAND</div><div class="poker-hand" id="tcp-dealer-hand" style="justify-content:center"></div></div>
+            </div>
+            <div class="vp-paytable" style="margin-bottom:10px">
+              <div class="vpt-row"><span>STRAIGHT FLUSH</span><span>40x</span></div>
+              <div class="vpt-row"><span>THREE OF A KIND</span><span>30x</span></div>
+              <div class="vpt-row"><span>STRAIGHT</span><span>6x</span></div>
+              <div class="vpt-row"><span>FLUSH</span><span>4x</span></div>
+              <div class="vpt-row"><span>PAIR</span><span>1x</span></div>
+            </div>
+            <div class="bet-controls">
+              <input type="number" class="bet-input" id="tcp-bet" value="100" min="1">
+              <div class="bet-quick">
+                <button class="bet-q-btn" onclick="setBet('tcp-bet',.5)">1/2</button>
+                <button class="bet-q-btn" onclick="setBet('tcp-bet',2)">2x</button>
+                <button class="bet-q-btn" onclick="setMaxBet('tcp-bet')">MAX</button>
+              </div>
+              <button class="play-btn" id="tcp-deal-btn" onclick="tcpDeal()">ANTE & DEAL</button>
+              <div id="tcp-decision" style="display:none;display:none;gap:8px;margin-top:8px" class="hidden">
+                <button class="play-btn" onclick="tcpPlay()" style="background:linear-gradient(135deg,var(--green),#2a8a4a)">PLAY (2x ANTE)</button>
+                <button class="play-btn" onclick="tcpFold()" style="background:var(--surface);color:var(--muted);border:1px solid var(--border)">FOLD</button>
+              </div>
+            </div>
+            <div class="game-result" id="tcp-result"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCRATCH CARD -->
+      <div id="page-scratch" class="page">
+        <div class="page-header"><div class="page-title">SCRATCH CARD</div><div class="page-subtitle">SCRATCH TO REVEAL — MATCH 3 TO WIN</div></div>
+        <div class="game-panel">
+          <div class="scratch-grid" id="scratch-grid"></div>
+          <div class="scratch-paytable">
+            <div class="vpt-row"><span>💎💎💎</span><span>50x</span></div>
+            <div class="vpt-row"><span>⭐⭐⭐</span><span>25x</span></div>
+            <div class="vpt-row"><span>🍀🍀🍀</span><span>10x</span></div>
+            <div class="vpt-row"><span>🔔🔔🔔</span><span>5x</span></div>
+            <div class="vpt-row"><span>🍋🍋🍋</span><span>3x</span></div>
+            <div class="vpt-row"><span>🍒🍒🍒</span><span>2x</span></div>
+          </div>
+          <div class="bet-controls">
+            <input type="number" class="bet-input" id="scratch-bet" value="100" min="1">
+            <div class="bet-quick">
+              <button class="bet-q-btn" onclick="setBet('scratch-bet',.5)">1/2</button>
+              <button class="bet-q-btn" onclick="setBet('scratch-bet',2)">2x</button>
+              <button class="bet-q-btn" onclick="setMaxBet('scratch-bet')">MAX</button>
+            </div>
+            <button class="play-btn" id="scratch-buy-btn" onclick="buyScratch()">BUY CARD</button>
+            <button class="play-btn" id="scratch-reveal-btn" onclick="revealAll()" style="display:none;background:linear-gradient(135deg,var(--blue),#2a5cd4)">REVEAL ALL</button>
+          </div>
+          <div class="game-result" id="scratch-result"></div>
+        </div>
+      </div>
+
+      <!-- MEMORY MATCH -->
+      <div id="page-memory" class="page">
+        <div class="page-header"><div class="page-title">MEMORY MATCH</div><div class="page-subtitle">MATCH ALL PAIRS — FASTER = HIGHER MULTIPLIER</div></div>
+        <div class="game-panel">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <div style="font-size:12px;color:var(--muted)">TIME: <span id="mem-timer" style="color:var(--gold)">--</span>s</div>
+            <div style="font-size:12px;color:var(--muted)">PAIRS: <span id="mem-pairs" style="color:var(--gold)">0</span>/8</div>
+            <div style="font-size:12px;color:var(--muted)">MULT: <span id="mem-mult" style="color:var(--gold)">--</span>x</div>
+          </div>
+          <div class="memory-grid" id="memory-grid"></div>
+          <div class="bet-controls" style="margin-top:16px">
+            <input type="number" class="bet-input" id="mem-bet" value="100" min="1">
+            <div class="bet-quick">
+              <button class="bet-q-btn" onclick="setBet('mem-bet',.5)">1/2</button>
+              <button class="bet-q-btn" onclick="setBet('mem-bet',2)">2x</button>
+              <button class="bet-q-btn" onclick="setMaxBet('mem-bet')">MAX</button>
+            </div>
+            <button class="play-btn" id="mem-start-btn" onclick="startMemory()">START GAME</button>
+          </div>
+          <div class="game-result" id="mem-result"></div>
+          <div style="font-size:10px;color:var(--muted);text-align:center;margin-top:10px;">Under 20s = 5x · Under 35s = 3x · Under 60s = 1.5x · Over 60s = 0.5x (loss)</div>
+        </div>
+      </div>
+
+      <!-- STOCK MARKET -->
+      <div id="page-stockmarket" class="page">
+        <div class="page-header"><div class="page-title">STOCK MARKET</div><div class="page-subtitle">PREDICT UP OR DOWN — 5 ROUNDS</div></div>
+        <div class="game-panel">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div style="font-size:12px;color:var(--muted)">TICKER: <span id="stock-ticker" style="color:var(--gold);font-family:'Bebas Neue'">---</span></div>
+            <div style="font-size:12px;color:var(--muted)">ROUND: <span id="stock-round" style="color:var(--gold)">-</span>/5</div>
+            <div style="font-size:12px;color:var(--muted)">MULT: <span id="stock-mult" style="color:var(--gold)">1.00</span>x</div>
+          </div>
+          <canvas id="stock-canvas" style="width:100%;height:160px;background:var(--deep);border-radius:4px;margin-bottom:12px;display:block"></canvas>
+          <div id="stock-price-display" style="text-align:center;font-family:'Bebas Neue';font-size:32px;color:var(--gold);margin-bottom:8px;">---</div>
+          <div id="stock-direction-row" class="stock-dir-row" style="display:none">
+            <button class="stock-dir-btn up" onclick="stockGuess('up')">▲ UP</button>
+            <button class="stock-dir-btn down" onclick="stockGuess('down')">▼ DOWN</button>
+          </div>
+          <div id="stock-cashout-row" style="display:none;margin-bottom:8px">
+            <button class="play-btn" onclick="stockCashout()" style="background:linear-gradient(135deg,var(--green),#2a8a4a)">CASH OUT <span id="stock-cashout-val"></span></button>
+          </div>
+          <div class="bet-controls">
+            <input type="number" class="bet-input" id="stock-bet" value="100" min="1">
+            <div class="bet-quick">
+              <button class="bet-q-btn" onclick="setBet('stock-bet',.5)">1/2</button>
+              <button class="bet-q-btn" onclick="setBet('stock-bet',2)">2x</button>
+              <button class="bet-q-btn" onclick="setMaxBet('stock-bet')">MAX</button>
+            </div>
+            <button class="play-btn" id="stock-start-btn" onclick="startStock()">INVEST</button>
+          </div>
+          <div class="game-result" id="stock-result"></div>
+        </div>
+      </div>
+
+      <!-- SIX DICE -->
+      <div id="page-sixdice" class="page">
+        <div class="page-header"><div class="page-title">SIX DICE</div><div class="page-subtitle">GUESS A NUMBER 1–6 — ROLL 6 DICE — WIN PER MATCH</div></div>
+        <div class="game-panel">
+          <div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:14px;">PICK A NUMBER THEN ROLL — EARN 2x PER MATCHING DIE</div>
+          <div class="sixdice-picks">
+            <div class="sixdice-num" onclick="selectSixDice(1)" id="sd-1">1</div>
+            <div class="sixdice-num" onclick="selectSixDice(2)" id="sd-2">2</div>
+            <div class="sixdice-num" onclick="selectSixDice(3)" id="sd-3">3</div>
+            <div class="sixdice-num" onclick="selectSixDice(4)" id="sd-4">4</div>
+            <div class="sixdice-num" onclick="selectSixDice(5)" id="sd-5">5</div>
+            <div class="sixdice-num" onclick="selectSixDice(6)" id="sd-6">6</div>
+          </div>
+          <div class="sixdice-grid" id="sixdice-grid"></div>
+          <div class="bet-controls">
+            <input type="number" class="bet-input" id="sd-bet" value="100" min="1">
+            <div class="bet-quick">
+              <button class="bet-q-btn" onclick="setBet('sd-bet',.5)">1/2</button>
+              <button class="bet-q-btn" onclick="setBet('sd-bet',2)">2x</button>
+              <button class="bet-q-btn" onclick="setMaxBet('sd-bet')">MAX</button>
+            </div>
+            <button class="play-btn" id="sd-roll-btn" onclick="rollSixDice()">ROLL</button>
+          </div>
+          <div class="game-result" id="sd-result"></div>
+          <div style="font-size:10px;color:var(--muted);text-align:center;margin-top:10px;">0 matches = lose · 1 match = 2x · 2 = 4x · 3 = 8x · 4 = 16x · 5 = 32x · 6 = 100x</div>
+        </div>
+      </div>
       <!-- RECORDS -->
       <div id="page-records" class="page">
         <div class="page-header"><div class="page-title">RECORDS</div><div class="page-subtitle">HIGHEST AND LOWEST ACROSS ALL PLAYERS</div></div>
@@ -2267,6 +2520,404 @@ function renderRecords(){
     card.innerHTML=`<div class="rec-title">${metric.label}</div><div class="rec-row"><div class="rec-row-label">HIGHEST</div><div class="rec-row-name">${highest.username.toUpperCase()}</div><div class="rec-row-val">${metric.fmt(getValue(highest))}</div></div><div class="rec-row"><div class="rec-row-label" style="color:var(--red)">LOWEST</div><div class="rec-row-name">${lowest.username.toUpperCase()}</div><div class="rec-row-val" style="color:var(--red)">${metric.fmt(getValue(lowest))}</div></div>`;
     grid.appendChild(card);
   });
+}
+
+
+// ===== POKER SHARED =====
+function pokerDeck(){const suits=['♠','♥','♦','♣'],ranks=['2','3','4','5','6','7','8','9','10','J','Q','K','A'];const d=[];for(const s of suits)for(const r of ranks)d.push({suit:s,rank:r});return d.sort(()=>Math.random()-.5);}
+function rankVal(r){return['2','3','4','5','6','7','8','9','10','J','Q','K','A'].indexOf(r);}
+function cardHTML(card,red){return`<div class="bj-card"><div class="card-val${red?' red':''}">${card.rank}</div><div class="card-suit${red?' red':''}">${card.suit}</div></div>`;}
+function isRed(c){return c.suit==='♥'||c.suit==='♦';}
+function selectPokerMode(mode){
+  document.querySelectorAll('.poker-tab').forEach((t,i)=>{t.classList.toggle('active',['videopoker','war','threecard'][i]===mode);});
+  document.querySelectorAll('.poker-mode').forEach(m=>m.style.display='none');
+  document.getElementById('poker-'+mode).style.display='block';
+}
+
+// ===== VIDEO POKER =====
+let vpDeck=[],vpHand=[],vpHeld=[],vpBet=0,vpDealt=false;
+function vpDeal(){
+  const bet=getBet('vp-bet');if(bet===null)return;
+  vpBet=bet;vpDeck=pokerDeck();vpHand=vpDeck.splice(0,5);vpHeld=[false,false,false,false,false];vpDealt=true;
+  renderVPHand(false);
+  document.getElementById('vp-deal-btn').style.display='none';
+  document.getElementById('vp-draw-btn').style.display='block';
+  document.getElementById('vp-result').style.display='none';
+}
+function renderVPHand(locked){
+  const hand=document.getElementById('vp-hand');
+  const holdRow=document.getElementById('vp-hold-row');
+  hand.innerHTML='';holdRow.innerHTML='';
+  holdRow.style.display=locked?'none':'flex';
+  vpHand.forEach((card,i)=>{
+    hand.innerHTML+=cardHTML(card,isRed(card));
+    if(!locked){
+      const btn=document.createElement('button');
+      btn.className='vp-hold-btn'+(vpHeld[i]?' held':'');
+      btn.textContent=vpHeld[i]?'HELD':'HOLD';
+      btn.onclick=()=>{vpHeld[i]=!vpHeld[i];renderVPHand(false);};
+      holdRow.appendChild(btn);
+    }
+  });
+}
+function vpDraw(){
+  vpHand=vpHand.map((card,i)=>vpHeld[i]?card:vpDeck.splice(0,1)[0]);
+  vpDealt=false;renderVPHand(true);
+  document.getElementById('vp-draw-btn').style.display='none';
+  document.getElementById('vp-deal-btn').style.display='block';
+  document.getElementById('vp-hold-row').style.display='none';
+  const {name,mult}=evalVPHand(vpHand);
+  const user=getCurrentUser();user.balance-=vpBet;
+  const resultEl=document.getElementById('vp-result');
+  if(mult>0){const pay=Math.floor(vpBet*mult);user.balance+=pay;resultEl.className='game-result win';resultEl.textContent=name+' — '+mult+'x — +'+fmt(pay);recordGame(user,'Video Poker',vpBet,pay,true);}
+  else{resultEl.className='game-result lose';resultEl.textContent='NO HAND — LOSS';recordGame(user,'Video Poker',vpBet,0,false);}
+  resultEl.style.display='block';saveCurrentUser(user);updateUI();
+}
+function evalVPHand(hand){
+  const vals=hand.map(c=>rankVal(c.rank)).sort((a,b)=>a-b);
+  const suits=hand.map(c=>c.suit);
+  const flush=suits.every(s=>s===suits[0]);
+  const straight=vals[4]-vals[0]===4&&new Set(vals).size===5||(vals.join(',')=='0,1,2,3,12');
+  const counts={};vals.forEach(v=>{counts[v]=(counts[v]||0)+1;});
+  const c=Object.values(counts).sort((a,b)=>b-a);
+  if(flush&&straight&&vals[4]===12&&vals[3]===11)return{name:'ROYAL FLUSH',mult:800};
+  if(flush&&straight)return{name:'STRAIGHT FLUSH',mult:50};
+  if(c[0]===4)return{name:'FOUR OF A KIND',mult:25};
+  if(c[0]===3&&c[1]===2)return{name:'FULL HOUSE',mult:9};
+  if(flush)return{name:'FLUSH',mult:6};
+  if(straight)return{name:'STRAIGHT',mult:4};
+  if(c[0]===3)return{name:'THREE OF A KIND',mult:3};
+  if(c[0]===2&&c[1]===2)return{name:'TWO PAIR',mult:2};
+  const pairs=Object.entries(counts).filter(([v,n])=>n===2);
+  if(pairs.length===1&&parseInt(pairs[0][0])>=9)return{name:'JACKS OR BETTER',mult:1};
+  return{name:'NO HAND',mult:0};
+}
+
+// ===== WAR =====
+let warDeck=[],warBetAmt=0,warPlayerCard=null,warDealerCard=null,warInWar=false;
+function playWar(){
+  const bet=getBet('war-bet');if(bet===null)return;
+  warBetAmt=bet;warInWar=false;warDeck=pokerDeck();
+  warPlayerCard=warDeck.pop();warDealerCard=warDeck.pop();
+  const pv=rankVal(warPlayerCard.rank),dv=rankVal(warDealerCard.rank);
+  const pRed=isRed(warPlayerCard),dRed=isRed(warDealerCard);
+  document.getElementById('war-player-card').innerHTML=`<span style="color:${pRed?'#c0392b':'#222'}">${warPlayerCard.rank}${warPlayerCard.suit}</span>`;
+  document.getElementById('war-dealer-card').innerHTML=`<span style="color:${dRed?'#c0392b':'#222'}">${warDealerCard.rank}${warDealerCard.suit}</span>`;
+  document.getElementById('war-result').style.display='none';
+  if(pv>dv){endWar(true,'YOU WIN!',warBetAmt*2);}
+  else if(dv>pv){endWar(false,'DEALER WINS',0);}
+  else{
+    document.getElementById('war-state').textContent='TIE — GO TO WAR OR SURRENDER?';
+    document.getElementById('war-play-btn').style.display='none';
+    document.getElementById('war-btn').style.display='block';
+    document.getElementById('war-fold-btn').style.display='block';
+    warInWar=true;
+  }
+}
+function goToWar(){
+  warDeck=pokerDeck();
+  const p2=warDeck.pop(),d2=warDeck.pop();
+  document.getElementById('war-state').textContent='';
+  document.getElementById('war-btn').style.display='none';
+  document.getElementById('war-fold-btn').style.display='none';
+  document.getElementById('war-play-btn').style.display='block';
+  const p2v=rankVal(p2.rank),d2v=rankVal(d2.rank);
+  if(p2v>=d2v){endWar(true,'WAR WON! (+2x)',warBetAmt*4);}
+  else{endWar(false,'WAR LOST',0);}
+}
+function warFold(){
+  document.getElementById('war-btn').style.display='none';
+  document.getElementById('war-fold-btn').style.display='none';
+  document.getElementById('war-play-btn').style.display='block';
+  document.getElementById('war-state').textContent='';
+  endWar(false,'SURRENDERED',Math.floor(warBetAmt/2));
+}
+function endWar(won,msg,payout){
+  const user=getCurrentUser();user.balance-=warBetAmt;
+  if(payout>0)user.balance+=payout;
+  const resultEl=document.getElementById('war-result');
+  resultEl.className='game-result '+(won?'win':'lose');
+  resultEl.textContent=msg+(payout>0?' — +'+fmt(payout):'');
+  resultEl.style.display='block';
+  recordGame(user,'War',warBetAmt,payout,won);saveCurrentUser(user);updateUI();
+  if(won)showToast('WAR WIN '+fmt(payout),'win');else showToast('WAR LOSS','lose');
+}
+
+// ===== THREE CARD POKER =====
+let tcpDeck=[],tcpPlayerHand=[],tcpDealerHand=[],tcpBetAmt=0;
+function tcpDeal(){
+  const bet=getBet('tcp-bet');if(bet===null)return;
+  tcpBetAmt=bet;tcpDeck=pokerDeck();
+  tcpPlayerHand=[tcpDeck.pop(),tcpDeck.pop(),tcpDeck.pop()];
+  tcpDealerHand=[tcpDeck.pop(),tcpDeck.pop(),tcpDeck.pop()];
+  const ph=document.getElementById('tcp-player-hand');
+  const dh=document.getElementById('tcp-dealer-hand');
+  ph.innerHTML=tcpPlayerHand.map(c=>cardHTML(c,isRed(c))).join('');
+  dh.innerHTML='<div class="bj-card"><div class="card-val">?</div></div><div class="bj-card"><div class="card-val">?</div></div><div class="bj-card"><div class="card-val">?</div></div>';
+  document.getElementById('tcp-deal-btn').style.display='none';
+  const dec=document.getElementById('tcp-decision');dec.classList.remove('hidden');dec.style.display='flex';
+  document.getElementById('tcp-result').style.display='none';
+}
+function tcpPlay(){
+  document.getElementById('tcp-decision').style.display='none';
+  document.getElementById('tcp-decision').classList.add('hidden');
+  document.getElementById('tcp-dealer-hand').innerHTML=tcpDealerHand.map(c=>cardHTML(c,isRed(c))).join('');
+  const pm=evalTCP(tcpPlayerHand),dm=evalTCP(tcpDealerHand);
+  const user=getCurrentUser();user.balance-=tcpBetAmt*2;
+  let payout=0,won=false;
+  const resultEl=document.getElementById('tcp-result');
+  if(dm.rank===0){
+    payout=Math.floor(tcpBetAmt*pm.mult)+tcpBetAmt;user.balance+=payout;won=true;
+    resultEl.className='game-result win';resultEl.textContent='DEALER DOES NOT QUALIFY — '+pm.name+' — +'+fmt(payout);
+  }else if(pm.rank>dm.rank){
+    payout=Math.floor(tcpBetAmt*pm.mult)+tcpBetAmt;user.balance+=payout;won=true;
+    resultEl.className='game-result win';resultEl.textContent='YOU WIN! '+pm.name+' beats '+dm.name+' — +'+fmt(payout);
+  }else if(pm.rank===dm.rank){
+    payout=tcpBetAmt;user.balance+=payout;
+    resultEl.className='game-result';resultEl.textContent='TIE — ANTE RETURNED';
+  }else{
+    resultEl.className='game-result lose';resultEl.textContent='DEALER WINS — '+dm.name+' — LOSS';
+  }
+  resultEl.style.display='block';
+  recordGame(user,'3-Card Poker',tcpBetAmt*2,payout,won);saveCurrentUser(user);updateUI();
+  document.getElementById('tcp-deal-btn').style.display='block';
+  if(won)showToast('POKER WIN '+fmt(payout),'win');else showToast('POKER LOSS','lose');
+}
+function tcpFold(){
+  document.getElementById('tcp-decision').style.display='none';
+  document.getElementById('tcp-decision').classList.add('hidden');
+  document.getElementById('tcp-deal-btn').style.display='block';
+  const user=getCurrentUser();user.balance-=tcpBetAmt;
+  recordGame(user,'3-Card Poker',tcpBetAmt,0,false);saveCurrentUser(user);updateUI();
+  const resultEl=document.getElementById('tcp-result');resultEl.className='game-result lose';resultEl.textContent='FOLDED — ANTE LOST';resultEl.style.display='block';
+  showToast('FOLDED','lose');
+}
+function evalTCP(hand){
+  const vals=hand.map(c=>rankVal(c.rank)).sort((a,b)=>a-b);
+  const suits=hand.map(c=>c.suit);
+  const flush=suits.every(s=>s===suits[0]);
+  const straight=vals[2]-vals[0]===2&&new Set(vals).size===3||(vals[0]===0&&vals[1]===1&&vals[2]===12);
+  const counts={};vals.forEach(v=>{counts[v]=(counts[v]||0)+1;});
+  const c=Object.values(counts).sort((a,b)=>b-a);
+  if(flush&&straight)return{name:'STRAIGHT FLUSH',rank:5,mult:40};
+  if(c[0]===3)return{name:'THREE OF A KIND',rank:4,mult:30};
+  if(straight)return{name:'STRAIGHT',rank:3,mult:6};
+  if(flush)return{name:'FLUSH',rank:2,mult:4};
+  if(c[0]===2)return{name:'PAIR',rank:1,mult:1};
+  return{name:'HIGH CARD',rank:0,mult:0};
+}
+
+// ===== SCRATCH CARD =====
+const SCRATCH_SYMS=['💎','⭐','🍀','🔔','🍋','🍒'];
+const SCRATCH_MULTS={0:0,1:0,2:0,3:2};
+const SCRATCH_JACKPOTS={'💎':50,'⭐':25,'🍀':10,'🔔':5,'🍋':3,'🍒':2};
+let scratchSymbols=[],scratchRevealed=[],scratchBetAmt=0,scratchActive=false;
+function buyScratch(){
+  const bet=getBet('scratch-bet');if(bet===null)return;
+  scratchBetAmt=bet;scratchActive=true;
+  scratchRevealed=Array(9).fill(false);
+  const pick=SCRATCH_SYMS[Math.floor(Math.random()*SCRATCH_SYMS.length)];
+  const matchPos=[0,1,2,3,4,5,6,7,8].sort(()=>Math.random()-.5);
+  const matchCount=Math.random()<0.25?3:Math.random()<0.4?2:Math.random()<0.5?1:0;
+  scratchSymbols=Array(9).fill(null).map(()=>SCRATCH_SYMS[Math.floor(Math.random()*SCRATCH_SYMS.length)]);
+  for(let i=0;i<matchCount;i++)scratchSymbols[matchPos[i]]=pick;
+  document.getElementById('scratch-buy-btn').style.display='none';
+  document.getElementById('scratch-reveal-btn').style.display='block';
+  document.getElementById('scratch-result').style.display='none';
+  buildScratchGrid();
+}
+function buildScratchGrid(){
+  const grid=document.getElementById('scratch-grid');grid.innerHTML='';
+  for(let i=0;i<9;i++){
+    const cell=document.createElement('div');cell.className='scratch-cell';cell.dataset.i=i;
+    if(scratchRevealed[i]){cell.classList.add('scratched');cell.textContent=scratchSymbols[i];}
+    else{cell.onclick=()=>scratchCell(i);}
+    grid.appendChild(cell);
+  }
+}
+function scratchCell(i){
+  if(!scratchActive||scratchRevealed[i])return;
+  scratchRevealed[i]=true;
+  const cell=document.querySelector(`.scratch-cell[data-i='${i}']`);
+  cell.classList.add('scratched');cell.textContent=scratchSymbols[i];cell.onclick=null;
+  if(scratchRevealed.every(r=>r))finishScratch();
+}
+function revealAll(){
+  scratchRevealed=Array(9).fill(true);buildScratchGrid();finishScratch();}
+function finishScratch(){
+  scratchActive=false;
+  document.getElementById('scratch-reveal-btn').style.display='none';
+  document.getElementById('scratch-buy-btn').style.display='block';
+  const counts={};scratchSymbols.forEach(s=>{counts[s]=(counts[s]||0)+1;});
+  let bestMult=0,bestSym='';
+  for(const [sym,cnt] of Object.entries(counts)){if(cnt>=3){const m=SCRATCH_JACKPOTS[sym];if(m>bestMult){bestMult=m;bestSym=sym;}}}
+  const user=getCurrentUser();user.balance-=scratchBetAmt;
+  const resultEl=document.getElementById('scratch-result');
+  if(bestMult>0){const pay=Math.floor(scratchBetAmt*bestMult);user.balance+=pay;resultEl.className='game-result win';resultEl.textContent='THREE '+bestSym+' — '+bestMult+'x — +'+fmt(pay);recordGame(user,'Scratch Card',scratchBetAmt,pay,true);showToast('SCRATCH WIN '+fmt(pay),'win');}
+  else{resultEl.className='game-result lose';resultEl.textContent='NO MATCH — LOSS';recordGame(user,'Scratch Card',scratchBetAmt,0,false);showToast('NO MATCH','lose');}
+  resultEl.style.display='block';saveCurrentUser(user);updateUI();
+}
+
+// ===== MEMORY MATCH =====
+const MEM_EMOJIS=['🃏','🎲','🎰','🎯','🎪','🎭','💰','🏆'];
+let memCards=[],memFlipped=[],memMatched=0,memLock=false,memTimer=null,memStart=0,memBetAmt=0,memActive=false;
+function startMemory(){
+  const bet=getBet('mem-bet');if(bet===null)return;
+  memBetAmt=bet;memMatched=0;memFlipped=[];memLock=false;memActive=true;
+  const pairs=[...MEM_EMOJIS,...MEM_EMOJIS].sort(()=>Math.random()-.5);
+  memCards=pairs.map((e,i)=>({id:i,emoji:e,flipped:false,matched:false}));
+  buildMemGrid();
+  document.getElementById('mem-pairs').textContent='0';
+  document.getElementById('mem-mult').textContent='--';
+  document.getElementById('mem-result').style.display='none';
+  if(memTimer)clearInterval(memTimer);
+  memStart=Date.now();
+  memTimer=setInterval(()=>{
+    const elapsed=Math.floor((Date.now()-memStart)/1000);
+    document.getElementById('mem-timer').textContent=elapsed;
+  },200);
+}
+function buildMemGrid(){
+  const grid=document.getElementById('memory-grid');grid.innerHTML='';
+  memCards.forEach((card,i)=>{
+    const el=document.createElement('div');
+    el.className='mem-card'+(card.matched?' matched':card.flipped?' flipped':' hidden-face');
+    el.textContent=card.flipped||card.matched?card.emoji:'';
+    el.onclick=()=>flipMemCard(i);
+    grid.appendChild(el);
+  });
+}
+function flipMemCard(i){
+  if(memLock||memCards[i].flipped||memCards[i].matched||!memActive)return;
+  memCards[i].flipped=true;buildMemGrid();
+  memFlipped.push(i);
+  if(memFlipped.length===2){
+    memLock=true;
+    const [a,b]=memFlipped;
+    if(memCards[a].emoji===memCards[b].emoji){
+      memCards[a].matched=memCards[b].matched=true;
+      memMatched++;memFlipped=[];memLock=false;
+      document.getElementById('mem-pairs').textContent=memMatched;
+      buildMemGrid();
+      if(memMatched===8)finishMemory();
+    }else{
+      setTimeout(()=>{memCards[a].flipped=memCards[b].flipped=false;memFlipped=[];memLock=false;buildMemGrid();},900);
+    }
+  }
+}
+function finishMemory(){
+  clearInterval(memTimer);memActive=false;
+  const elapsed=Math.floor((Date.now()-memStart)/1000);
+  document.getElementById('mem-timer').textContent=elapsed;
+  const mult=elapsed<20?5:elapsed<35?3:elapsed<60?1.5:0.5;
+  const won=mult>1;
+  document.getElementById('mem-mult').textContent=mult.toFixed(1);
+  const user=getCurrentUser();user.balance-=memBetAmt;
+  const resultEl=document.getElementById('mem-result');
+  if(won){const pay=Math.floor(memBetAmt*mult);user.balance+=pay;resultEl.className='game-result win';resultEl.textContent=elapsed+'s — '+mult+'x — +'+fmt(pay);recordGame(user,'Memory Match',memBetAmt,pay,true);showToast('MEMORY WIN '+fmt(pay),'win');}
+  else{const pay=Math.floor(memBetAmt*mult);user.balance+=pay;resultEl.className='game-result lose';resultEl.textContent=elapsed+'s — TOO SLOW — '+fmt(pay)+' BACK';recordGame(user,'Memory Match',memBetAmt,pay,false);showToast('TOO SLOW — PARTIAL LOSS','lose');}
+  resultEl.style.display='block';saveCurrentUser(user);updateUI();
+}
+
+// ===== STOCK MARKET =====
+const STOCK_TICKERS=['LCKVLT','GMBLEX','CRYPT0','MONEYX','VLTCOIN','RNGSEED','BETMAX','JACKPOT'];
+let stockBet=0,stockMult=1,stockRound=0,stockPrices=[],stockTicker='',stockActive=false;
+function startStock(){
+  const bet=getBet('stock-bet');if(bet===null)return;
+  stockBet=bet;stockMult=1;stockRound=0;stockActive=true;
+  stockTicker=STOCK_TICKERS[Math.floor(Math.random()*STOCK_TICKERS.length)];
+  stockPrices=[100+Math.floor(Math.random()*900)];
+  document.getElementById('stock-ticker').textContent=stockTicker;
+  document.getElementById('stock-start-btn').style.display='none';
+  document.getElementById('stock-direction-row').style.display='none';
+  document.getElementById('stock-result').style.display='none';
+  document.getElementById('stock-cashout-row').style.display='none';
+  drawStockChart();updateStockPrice();
+  animateStockRound();
+}
+function animateStockRound(){
+  stockRound++;
+  document.getElementById('stock-round').textContent=stockRound;
+  const prev=stockPrices[stockPrices.length-1];
+  const change=(Math.random()-.45)*prev*.3;
+  const next=Math.max(1,Math.round(prev+change));
+  stockPrices.push(next);
+  drawStockChart();updateStockPrice();
+  document.getElementById('stock-direction-row').style.display='flex';
+  if(stockRound>1){
+    document.getElementById('stock-cashout-row').style.display='block';
+    document.getElementById('stock-cashout-val').textContent=fmt(Math.floor(stockBet*stockMult));
+  }
+}
+function updateStockPrice(){
+  const p=stockPrices[stockPrices.length-1];
+  document.getElementById('stock-price-display').textContent='$'+p.toFixed(2);
+}
+function drawStockChart(){
+  const canvas=document.getElementById('stock-canvas');
+  canvas.width=canvas.offsetWidth||400;canvas.height=canvas.offsetHeight||160;
+  const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);
+  if(stockPrices.length<2)return;
+  const min=Math.min(...stockPrices)*0.95,max=Math.max(...stockPrices)*1.05;
+  const xStep=canvas.width/(stockPrices.length-1);
+  ctx.strokeStyle='#4a7cf7';ctx.lineWidth=2;ctx.beginPath();
+  stockPrices.forEach((p,i)=>{
+    const x=i*xStep;const y=canvas.height-(p-min)/(max-min)*canvas.height*0.9-canvas.height*0.05;
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+}
+function stockGuess(dir){
+  const prev=stockPrices[stockPrices.length-2],curr=stockPrices[stockPrices.length-1];
+  const actual=curr>prev?'up':'down';
+  document.getElementById('stock-direction-row').style.display='none';
+  if(dir===actual){
+    stockMult*=1.8;showToast('CORRECT! '+stockMult.toFixed(2)+'x','win');
+    if(stockRound>=5){endStock(true);}else{setTimeout(animateStockRound,600);}
+  }else{endStock(false);}
+}
+function stockCashout(){endStock(true);}
+function endStock(won){
+  stockActive=false;
+  document.getElementById('stock-direction-row').style.display='none';
+  document.getElementById('stock-cashout-row').style.display='none';
+  document.getElementById('stock-start-btn').style.display='block';
+  const user=getCurrentUser();user.balance-=stockBet;
+  const resultEl=document.getElementById('stock-result');
+  if(won&&stockMult>1){const pay=Math.floor(stockBet*stockMult);user.balance+=pay;resultEl.className='game-result win';resultEl.textContent='CASHED OUT — '+stockMult.toFixed(2)+'x — +'+fmt(pay);recordGame(user,'Stock Market',stockBet,pay,true);showToast('STOCK WIN '+fmt(pay),'win');}
+  else{resultEl.className='game-result lose';resultEl.textContent='WRONG PREDICTION — LOSS';recordGame(user,'Stock Market',stockBet,0,false);showToast('WRONG — LOSS','lose');}
+  resultEl.style.display='block';saveCurrentUser(user);updateUI();
+}
+
+// ===== SIX DICE =====
+let sdGuess=null;
+function selectSixDice(n){
+  sdGuess=n;
+  for(let i=1;i<=6;i++)document.getElementById('sd-'+i).classList.toggle('selected',i===n);
+}
+function rollSixDice(){
+  if(!sdGuess){showToast('PICK A NUMBER FIRST','info');return;}
+  const bet=getBet('sd-bet');if(bet===null)return;
+  const grid=document.getElementById('sixdice-grid');grid.innerHTML='';
+  const results=[];
+  for(let i=0;i<6;i++){
+    const die=document.createElement('div');die.className='sd-die rolling';
+    die.textContent=sdGuess;grid.appendChild(die);results.push(Math.floor(Math.random()*6)+1);
+  }
+  setTimeout(()=>{
+    let matches=0;
+    results.forEach((val,i)=>{
+      const die=grid.children[i];die.classList.remove('rolling');die.textContent=val;
+      if(val===sdGuess){die.classList.add('match');matches++;}
+    });
+    const multMap={0:0,1:2,2:4,3:8,4:16,5:32,6:100};
+    const mult=multMap[matches];
+    const user=getCurrentUser();user.balance-=bet;
+    const resultEl=document.getElementById('sd-result');
+    if(mult>0){const pay=Math.floor(bet*mult);user.balance+=pay;resultEl.className='game-result win';resultEl.textContent=matches+' MATCH'+(matches>1?'ES':'')+'! '+mult+'x — +'+fmt(pay);recordGame(user,'Six Dice',bet,pay,true);showToast(matches+' MATCH — WIN '+fmt(pay),'win');}
+    else{resultEl.className='game-result lose';resultEl.textContent='NO MATCHES — LOSS';recordGame(user,'Six Dice',bet,0,false);showToast('NO MATCHES — LOSS','lose');}
+    resultEl.style.display='block';saveCurrentUser(user);updateUI();
+  },700);
 }
 
 window.addEventListener('load',async()=>{
